@@ -14,7 +14,7 @@ import (
 
 	"github.com/cdemers/journald2graylog/blacklist"
 	"github.com/cdemers/journald2graylog/gelf"
-	"github.com/cdemers/journald2graylog/journald"
+	"github.com/jan-zajic/journald2graylog/journald"
 	rkgelf "github.com/robertkowalski/graylog-golang"
 )
 
