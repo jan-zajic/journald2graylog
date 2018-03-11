@@ -4,7 +4,8 @@ package journald
 // entry fields.
 type JournaldJSONLogEntry struct {
 	// User Journal Fields (from freedesktop docs)
-	Message          string `json:"MESSAGE"`
+	MessageJSON      interface{} `json:"MESSAGE"`
+	Message          string
 	MessageID        string `json:"MESSAGE_ID"`
 	Priority         string `json:"PRIORITY"`
 	CodeFile         string `json:"CODE_FILE,omitempty"`
