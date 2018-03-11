@@ -121,7 +121,7 @@ func prepareGelfPayload(enableRawLogLine *bool, line []byte, defaultHostname str
 				break
 			}
 		default:
-			log.Printf("The following log line was not a correctly JSON encoded, it will be skiped: \"%s\"\n", file)
+			log.Printf("The following log line was not a correctly JSON encoded, it will be skiped: \"%s\"\n", line)
 			return ""
 		}
 	}
