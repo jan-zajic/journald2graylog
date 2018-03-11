@@ -100,6 +100,7 @@ func prepareGelfPayload(enableRawLogLine *bool, line []byte, defaultHostname str
 	err := json.Unmarshal(line, &logEntry)
 	if err != nil {
 		log.Printf("The following log line was not a correctly JSON encoded, it will be skiped: \"%s\"\n", line)
+		fmt.Println(err)
 		return ""
 	}
 
