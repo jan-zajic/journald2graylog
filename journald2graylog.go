@@ -133,7 +133,7 @@ func prepareGelfPayload(enableRawLogLine *bool, line []byte, defaultHostname str
 			f := reflect.Indirect(r).FieldByName(k)
 			val := f.String()
 			for _, regexp := range v {
-				if regexp.Match(val) {
+				if regexp.MatchString(val) {
 					//blacklisted entry, skipping
 					return ""
 				}
