@@ -35,11 +35,11 @@ type GELFLogEntry struct {
 	RawLogLine string `json:"_RawLogLine"`
 
 	// docker extended fields (from docker Journald logging driver)
-	ContainerID             string `json:"CONTAINER_ID,omitempty"`
-	ContainerIDFull         string `json:"CONTAINER_ID_FULL,omitempty"`
-	ContainerName           string `json:"CONTAINER_NAME,omitempty"`
-	ContaierTag             string `json:"CONTAINER_TAG,omitempty"`
-	ContainerPartialMessage string `json:"CONTAINER_PARTIAL_MESSAGE,omitempty"`
+	ContainerID             string `json:"ContainerID,omitempty"`
+	ContainerIDFull         string `json:"ContainerIDFull,omitempty"`
+	ContainerName           string `json:"ContainerName,omitempty"`
+	ContaierTag             string `json:"ContaierTag,omitempty"`
+	ContainerPartialMessage string `json:"ContainerPartialMessage,omitempty"`
 }
 
 func (log *GELFLogEntry) String() (output string) {
