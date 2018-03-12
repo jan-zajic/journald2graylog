@@ -24,6 +24,7 @@ var (
 	enableRawLogLine  = kingpin.Flag("enable-rawlogline", "Wether journald2graylog will send the raw log line or not, disabled by default.").Envar("J2G_ENABLE_RAWLOGLINE").Bool()
 	blacklistFlag     = kingpin.Flag("blacklist", "Prevent sending matching logs to the Graylog server. The value of this parameter can be one or more Regex separated by a space ( e.g. : \"foo.* bar.*\" )").Envar("J2G_BLACKLIST").String()
 	graylogHostname   = kingpin.Flag("hostname", "Hostname or IP of your Graylog server, it has no default and MUST be specified").Envar("J2G_HOSTNAME").Required().String()
+	nodeHostname      = kingpin.Flag("host", "Override host field in Gelf format. If not specified take hostname from journald or hostname of machine").Default("").Envar("J2G_HOST").String()
 	graylogPort       = kingpin.Flag("port", "Port of the UDP GELF input of the Graylog server").Default("12201").Envar("J2G_PORT").Int()
 	graylogPacketSize = kingpin.Flag("packet-size", "Maximum size of the TCP/IP packets you can use between the source (journald2graylg) and the destination (your Graylog server)").Default("1420").Envar("J2G_PACKET_SIZE").Int()
 )
@@ -144,8 +145,11 @@ func prepareGelfPayload(enableRawLogLine *bool, line []byte, defaultHostname str
 	if *enableRawLogLine {
 		gelfLogEntry.RawLogLine = string(line)
 	}
+	
 	gelfLogEntry.Version = "1.1"
-	if logEntry.Hostname == "" || logEntry.Hostname == "localhost" {
+	if *nodeHostname != "" {
+		gelfLogEntry.Host = *nodeHostname
+	} else if logEntry.Hostname == "" || logEntry.Hostname == "localhost" {
 		gelfLogEntry.Host = defaultHostname
 	} else {
 		gelfLogEntry.Host = logEntry.Hostname
