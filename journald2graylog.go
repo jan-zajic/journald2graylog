@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"reflect"
 	"strconv"
 	"strings"
 
@@ -21,7 +22,7 @@ import (
 var (
 	verbose           = kingpin.Flag("verbose", "Wether journald2graylog will be verbose or not.").Short('v').Bool()
 	enableRawLogLine  = kingpin.Flag("enable-rawlogline", "Wether journald2graylog will send the raw log line or not, disabled by default.").Envar("J2G_ENABLE_RAWLOGLINE").Bool()
-	blacklistFlag     = kingpin.Flag("blacklist", "Prevent sending matching logs to the Graylog server. The value of this parameter can be one or more Regex separated by a semicolon ( e.g. : \"foo.*;bar.*\" )").Envar("J2G_BLACKLIST").String()
+	blacklistFlag     = kingpin.Flag("blacklist", "Prevent sending matching logs to the Graylog server. The value of this parameter can be one or more Regex separated by a space ( e.g. : \"foo.* bar.*\" )").Envar("J2G_BLACKLIST").String()
 	graylogHostname   = kingpin.Flag("hostname", "Hostname or IP of your Graylog server, it has no default and MUST be specified").Envar("J2G_HOSTNAME").Required().String()
 	graylogPort       = kingpin.Flag("port", "Port of the UDP GELF input of the Graylog server").Default("12201").Envar("J2G_PORT").Int()
 	graylogPacketSize = kingpin.Flag("packet-size", "Maximum size of the TCP/IP packets you can use between the source (journald2graylg) and the destination (your Graylog server)").Default("1420").Envar("J2G_PACKET_SIZE").Int()
@@ -76,7 +77,7 @@ func main() {
 			continue
 		}
 
-		gelfPayload := prepareGelfPayload(enableRawLogLine, line, defaultHostname)
+		gelfPayload := prepareGelfPayload(enableRawLogLine, line, defaultHostname, b)
 		if gelfPayload == "" {
 			continue
 		}
@@ -93,7 +94,7 @@ func main() {
 
 }
 
-func prepareGelfPayload(enableRawLogLine *bool, line []byte, defaultHostname string) string {
+func prepareGelfPayload(enableRawLogLine *bool, line []byte, defaultHostname string, blacklist blacklist.Blacklist) string {
 	var logEntry journald.JournaldJSONLogEntry
 	var gelfLogEntry gelf.GELFLogEntry
 
@@ -102,27 +103,41 @@ func prepareGelfPayload(enableRawLogLine *bool, line []byte, defaultHostname str
 		log.Printf("The following log line was not a correctly JSON encoded, it will be skiped: \"%s\"\n", line)
 		fmt.Println(err)
 		return ""
-	} else {
-		switch t := logEntry.MessageJSON.(type) {
-		case string:
-			logEntry.Message = logEntry.MessageJSON.(string)
-			break
-		case []interface{}:
-			if len(t) > 0 {
-				first := t[0]
-				switch first.(type) {
-				case float64:
-					var bytes []byte
-					for _, item := range t {
-						bytes = append(bytes, byte(item.(float64)))
-					}
-					logEntry.Message = string(bytes)
+	}
+
+	switch t := logEntry.MessageJSON.(type) {
+	case string:
+		logEntry.Message = logEntry.MessageJSON.(string)
+		break
+	case []interface{}:
+		if len(t) > 0 {
+			first := t[0]
+			switch first.(type) {
+			case float64:
+				var bytes []byte
+				for _, item := range t {
+					bytes = append(bytes, byte(item.(float64)))
 				}
-				break
+				logEntry.Message = string(bytes)
 			}
-		default:
-			log.Printf("The following log line was not a correctly JSON encoded, it will be skiped: \"%s\"\n", line)
-			return ""
+			break
+		}
+	default:
+		log.Printf("The following log line was not a correctly JSON encoded, it will be skiped: \"%s\"\n", line)
+		return ""
+	}
+
+	if len(blacklist.regexpMap) > 0 {
+		r := reflect.ValueOf(logEntry)
+		for k, v := range blacklist.regexpMap {
+			f := reflect.Indirect(r).FieldByName(k)
+			val := f.(string)
+			for _, regexp := range v {
+				if regexp.Match(val) {
+					//blacklisted entry, skipping
+					return ""
+				}
+			}
 		}
 	}
 

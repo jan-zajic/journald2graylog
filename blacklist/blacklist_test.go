@@ -1,6 +1,9 @@
 package blacklist
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 func TestIsBlacklisted(t *testing.T) {
 
@@ -43,7 +46,7 @@ func TestIsNotBlacklistedWhenEmpty(t *testing.T) {
 
 func TestPrepareBlacklist(t *testing.T) {
 
-	option := "foo.*;bar.*"
+	option := "foo.* bar.*"
 	b := PrepareBlacklist(&option)
 
 	bytes := []byte{'f', 'o', 'o'}
@@ -65,5 +68,27 @@ func TestPrepareBlacklist(t *testing.T) {
 
 	if doe != false {
 		t.Error()
+	}
+}
+
+func TestPrepareBlacklistFields(t *testing.T) {
+
+	option := "foo.* \"a==b\" ContainerName=bar.*"
+	b := PrepareBlacklist(&option)
+
+	for _, r := range b.regexp {
+		t.Log(r)
+	}
+
+	if len(b.regexp) != 2 {
+		t.Error("invalid len of regexp ", len(b.regexp))
+	}
+
+	for k, v := range b.regexpMap {
+		fmt.Printf("key[%s] value[%s]\n", k, v)
+	}
+
+	if len(b.regexpMap) != 1 {
+		t.Error("invalid len of regexp map", len(b.regexpMap))
 	}
 }
