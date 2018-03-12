@@ -127,9 +127,9 @@ func prepareGelfPayload(enableRawLogLine *bool, line []byte, defaultHostname str
 		return ""
 	}
 
-	if len(blacklist.regexpMap) > 0 {
+	if len(blacklist.RegexpMap) > 0 {
 		r := reflect.ValueOf(logEntry)
-		for k, v := range blacklist.regexpMap {
+		for k, v := range blacklist.RegexpMap {
 			f := reflect.Indirect(r).FieldByName(k)
 			val := f.(string)
 			for _, regexp := range v {

@@ -12,7 +12,7 @@ import (
 type Blacklist struct {
 	regexp []*regexp.Regexp
 	//multi map string -> regexp
-	regexpMap map[string][]*regexp.Regexp
+	RegexpMap map[string][]*regexp.Regexp
 }
 
 //IsBlacklisted Return true if any regex in the regex array match this line
