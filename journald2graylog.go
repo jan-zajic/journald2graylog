@@ -12,8 +12,8 @@ import (
 
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
 
-	"github.com/cdemers/journald2graylog/blacklist"
-	"github.com/cdemers/journald2graylog/gelf"
+	"github.com/jan-zajic/journald2graylog/blacklist"
+	"github.com/jan-zajic/journald2graylog/gelf"
 	"github.com/jan-zajic/journald2graylog/journald"
 	rkgelf "github.com/robertkowalski/graylog-golang"
 )
