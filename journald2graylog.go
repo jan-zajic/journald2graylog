@@ -171,6 +171,13 @@ func prepareGelfPayload(enableRawLogLine *bool, line []byte, defaultHostname str
 		// GELF: Function
 		gelfLogEntry.Function = logEntry.CodeFunction
 	}
+
+	gelfLogEntry.ContainerID = logEntry.ContainerID
+	gelfLogEntry.ContainerIDFull = logEntry.ContainerIDFull
+	gelfLogEntry.ContainerName = logEntry.ContainerName
+	gelfLogEntry.ContaierTag = logEntry.ContaierTag
+	gelfLogEntry.ContainerPartialMessage = logEntry.ContainerPartialMessage
+
 	gelfLogEntry.Transport = logEntry.Transport
 	gelfPayloadBytes, err := json.Marshal(gelfLogEntry)
 	if err != nil {

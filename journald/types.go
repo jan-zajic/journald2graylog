@@ -48,4 +48,12 @@ type JournaldJSONLogEntry struct {
 	Cursor             string `json:"__CURSOR"`
 	RealtimeTimestamp  string `json:"__REALTIME_TIMESTAMP"`
 	MonotonicTimestamp string `json:"__MONOTONIC_TIMESTAMP"`
+	
+	// docker fields (from Journald logging driver)
+	ContainerID        string `json:"CONTAINER_ID"`
+	ContainerIDFull    string `json:"CONTAINER_ID_FULL"`
+	ContainerName      string `json:"CONTAINER_NAME"`
+	ContaierTag        string `json:"CONTAINER_TAG"`
+	ContainerPartialMessage string `json:"CONTAINER_PARTIAL_MESSAGE"`
+	
 }
