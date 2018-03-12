@@ -84,11 +84,11 @@ func TestPrepareBlacklistFields(t *testing.T) {
 		t.Error("invalid len of regexp ", len(b.regexp))
 	}
 
-	for k, v := range b.regexpMap {
+	for k, v := range b.RegexpMap {
 		fmt.Printf("key[%s] value[%s]\n", k, v)
 	}
 
-	if len(b.regexpMap) != 1 {
-		t.Error("invalid len of regexp map", len(b.regexpMap))
+	if len(b.RegexpMap) != 1 {
+		t.Error("invalid len of regexp map", len(b.RegexpMap))
 	}
 }

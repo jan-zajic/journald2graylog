@@ -29,7 +29,7 @@ func (b *Blacklist) IsBlacklisted(line []byte) bool {
 func PrepareBlacklist(blacklist *string) Blacklist {
 
 	b := Blacklist{}
-	b.regexpMap = make(map[string][]*regexp.Regexp)
+	b.RegexpMap = make(map[string][]*regexp.Regexp)
 	args, _ := shellwords.Parse(*blacklist)
 	for _, r := range args {
 		if len(r) > 0 {
@@ -43,7 +43,7 @@ func PrepareBlacklist(blacklist *string) Blacklist {
 				field := splitted[0]
 				pattern := splitted[1]
 				rexp := regexp.MustCompile(pattern)
-				b.regexpMap[field] = append(b.regexpMap[field], rexp)
+				b.RegexpMap[field] = append(b.RegexpMap[field], rexp)
 			} else {
 				log.Fatal("Illegal input syntax for blacklist")
 			}
